@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Levelry token layer ─────────────────────────────────── */
+:root {
+  --bg-canvas:   #F0EDE6;
+  --bg-primary:  #FFFEFC;
+  --bg-secondary:#F6F5F1;
+  --bg-header:   #FAFAF5;
+  --text-1:      #1F1C18;
+  --text-2:      #595149;
+  --text-3:      #9B9286;
+  --border:      #D9D8D5;
+  --mustard:     #F5C518;
+  --mustard-edge:#D0A300;
+  --green:       #19A974;
+  --blue:        #3B82C4;
+  --orange:      #F27A1A;
+  --red:         #E63946;
+  --purple:      #A855F7;
+  --pink:        #DB2777;
+  --teal:        #0D9488;
+  --cyan:        #0891B2;
+  --lime:        #65A30D;
+  --amber:       #D97706;
+  --rose:        #E8416A;
+  --indigo:      #4338CA;
+  --coral:       #E05C3A;
+  --fuchsia:     #C026D3;
+  --brown:       #92694A;
+  --disabled:    #9DA3AF;
+
+  --cell-past:         #DDD9D1;
+  --cell-past-hover:   #CEC9C0;
+  --cell-future:       #C4B8A8;
+  --cell-future-hover: #B5A898;
+  --cell-note-past:    #F5C518;
+  --cell-note-past-hover: #F0BE10;
+  --cell-note-future:  #D0A300;
+  --cell-note-future-hover: #B88A00;
+
+  --shadow-sm: 0 1px 3px rgba(45,34,18,.06), 0 1px 1px rgba(45,34,18,.04);
+  --shadow-md: 0 4px 14px rgba(45,34,18,.07), 0 1px 3px rgba(45,34,18,.05);
+  --shadow-xl: 0 24px 70px rgba(45,34,18,.13), 0 4px 14px rgba(45,34,18,.07);
+  --scrim:     rgba(28,25,18,.28);
+}
+
+.dark {
+  --bg-canvas:   #141414;
+  --bg-primary:  #1F1F1F;
+  --bg-secondary:#1C1C1C;
+  --bg-header:   #181818;
+  --text-1:      #F0F0EE;
+  --text-2:      #9A9A96;
+  --text-3:      #555553;
+  --border:      #2C2C2C;
+
+  --cell-past:         #262626;
+  --cell-past-hover:   #303030;
+  --cell-future:       #363636;
+  --cell-future-hover: #424242;
+  --cell-note-past:    #F5C518;
+  --cell-note-past-hover: #E8B610;
+  --cell-note-future:  #C8960A;
+  --cell-note-future-hover: #B88800;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.18), 0 1px 1px rgba(0,0,0,.12);
+  --shadow-md: 0 3px 10px rgba(0,0,0,.23), 0 1px 2px rgba(0,0,0,.15);
+  --shadow-xl: 0 14px 40px rgba(0,0,0,.34), 0 3px 10px rgba(0,0,0,.2);
+  --scrim:     rgba(0,0,0,.55);
+}
+
+/* ── Month cell classes ─────────────────────────────────── */
+.cell-inactive   { background: transparent; border: 1px solid var(--border); opacity: .35; }
+.cell-past       { background: var(--cell-past); }
+.cell-past:hover { background: var(--cell-past-hover); }
+.cell-future       { background: var(--cell-future); }
+.cell-future:hover { background: var(--cell-future-hover); }
+.cell-note-past       { background: var(--cell-note-past); }
+.cell-note-past:hover { background: var(--cell-note-past-hover); }
+.cell-note-future       { background: var(--cell-note-future); }
+.cell-note-future:hover { background: var(--cell-note-future-hover); }
+
+/* ── Base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+.no-touch-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-canvas);
+  font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+input[type="date"] { color-scheme: light; }
+.dark input[type="date"] { color-scheme: dark; }
+
+textarea::placeholder { color: var(--text-3); }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+.tag-chip-label {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
