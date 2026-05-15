@@ -21,6 +21,7 @@
 
 - [Node.js](https://nodejs.org/) 20+
 - [Git](https://git-scm.com/)
+- [PM2](https://pm2.keymetrics.io/) (`npm install -g pm2`)
 
 ### Installation
 
@@ -30,18 +31,25 @@
    cd awhile
    ```
 
-2. Install dependencies and build:
+2. Install dependencies:
    ```bash
    npm install
-   npm run build
    ```
 
-3. Start the server:
+3. Start with PM2 (builds automatically, then starts the server):
    ```bash
-   npm start
+   pm2 start ecosystem.config.cjs
    ```
 
-4. Open your browser and navigate to [http://localhost:3001](http://localhost:3001).
+4. (Optional) Auto-start on system reboot:
+   ```bash
+   pm2 save
+   pm2 startup
+   ```
+
+5. Open your browser and navigate to [http://localhost:3001](http://localhost:3001).
+
+> **Without PM2:** `npm start` also works — it builds and starts the server in one step.
 
 ---
 
@@ -54,10 +62,10 @@ To update to the latest version:
 ```bash
 git pull
 npm install
-npm run build
+pm2 restart awhile
 ```
 
-Then restart the server process.
+The restart automatically rebuilds the frontend before launching.
 
 ### Data & Backups
 

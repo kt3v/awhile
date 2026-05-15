@@ -7,7 +7,7 @@
     "dev": "concurrently -k -n \"vite,api\" -c \"cyan,yellow\" \"vite\" \"node server/index.js\"",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "node server/index.js"
+    "start": "node start.js"
   },
   "dependencies": {
     "@tiptap/extension-image": "^3.23.4",
