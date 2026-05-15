@@ -33,19 +33,24 @@ export default function App() {
 
         <button
           onClick={openSettings}
-          className="absolute top-3 left-3 z-20 text-xs font-semibold transition-all duration-150"
+          className="absolute top-3 left-3 z-20 flex items-center justify-center transition-all duration-150"
           style={{
+            width: 36,
+            height: 36,
+            borderRadius: 10,
             color: 'var(--text-2)',
             background: 'var(--bg-primary)',
             border: '1px solid var(--border)',
-            borderRadius: '999px',
-            padding: '6px 14px',
             boxShadow: 'var(--shadow-sm)',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-primary)'; }}
         >
-          Settings
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="18" height="2" rx="1" fill="currentColor"/>
+            <rect y="6" width="18" height="2" rx="1" fill="currentColor"/>
+            <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+          </svg>
         </button>
 
         <NotePanel />
