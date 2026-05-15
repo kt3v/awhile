@@ -315,13 +315,16 @@ export default function SettingsModal() {
               onChange={(e) => setBirthDate(e.target.value)}
               max={TODAY}
               min="1900-01-01"
-              className="w-full text-sm font-medium outline-none transition-all duration-150"
+              className="w-full min-w-0 text-sm font-medium outline-none transition-all duration-150"
               style={{
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '10px 14px',
                 color: 'var(--text-1)',
+                boxSizing: 'border-box',
+                WebkitAppearance: 'none',
+                appearance: 'none',
               }}
               onFocus={(e) => {
                 e.currentTarget.style.background = 'var(--bg-primary)';
@@ -344,13 +347,14 @@ export default function SettingsModal() {
               onChange={(e) => setTotalYears(Number(e.target.value))}
               min={10}
               max={120}
-              className="w-full text-sm font-medium outline-none transition-all duration-150"
+              className="w-full min-w-0 text-sm font-medium outline-none transition-all duration-150"
               style={{
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '10px 14px',
                 color: 'var(--text-1)',
+                boxSizing: 'border-box',
               }}
               onFocus={(e) => {
                 e.currentTarget.style.background = 'var(--bg-primary)';
