@@ -9,8 +9,8 @@ const DECADE_EXTRA = 17; // my-2 (8+8) + h-px (1)
 const CELL_HEIGHT = 20;
 
 const CHIP_HEIGHT = 20;
-const CHIP_MAX_WIDTH = 90;
-const COL_WIDTH = 98;    // chip max-width + gap
+const CHIP_MAX_WIDTH = 78;
+const COL_WIDTH = 82;    // chip max-width + gap
 const CHIP_GAP = 4;
 const MAX_VERTICAL_SHIFT = 32;
 
@@ -220,7 +220,7 @@ export default function TagsSidebar({
   return (
     <div
       className="relative shrink-0 pb-12"
-      style={{ width: sidebarWidth, minWidth: CHIP_MAX_WIDTH + 16 }}
+      style={{ width: sidebarWidth, minWidth: CHIP_MAX_WIDTH + 2 }}
     >
       {/* Tag chips — anchored from the right (closest to grid) */}
       {rangeTags.map((tag) => {
@@ -243,7 +243,7 @@ export default function TagsSidebar({
               right: chipRight,
               height: CHIP_HEIGHT,
               maxWidth: CHIP_MAX_WIDTH,
-              padding: '0 7px',
+              padding: '0 5px',
               borderRadius: 999,
               background: isHov || isSel
                 ? colorVar
@@ -254,7 +254,7 @@ export default function TagsSidebar({
               transition: 'background 150ms',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 5,
+              gap: 4,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               boxShadow: isSel
@@ -300,7 +300,7 @@ export default function TagsSidebar({
             top: addButtonTop,
             right: addButtonRight,
             height: CHIP_HEIGHT,
-            padding: '0 8px',
+            padding: '0 6px',
             fontSize: 10,
             fontWeight: 600,
             whiteSpace: 'nowrap',
@@ -333,7 +333,7 @@ export default function TagsSidebar({
             top: addButtonTop,
             right: isMobile ? undefined : addButtonRight,
             left: isMobile ? `calc(100% - ${CHIP_MAX_WIDTH}px)` : undefined,
-            transform: isMobile ? `translateX(${CHIP_MAX_WIDTH + 8}px)` : undefined,
+            transform: isMobile ? `translateX(${CHIP_MAX_WIDTH + 4}px)` : undefined,
             display: 'flex',
             alignItems: 'center',
             gap: 4,

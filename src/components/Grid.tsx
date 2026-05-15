@@ -205,12 +205,12 @@ export default function Grid() {
 
   return (
     <div
-      className="flex-1 overflow-auto no-touch-select"
+      className="flex-1 overflow-y-auto overflow-x-hidden no-touch-select"
       style={drag ? { cursor: 'crosshair' } : undefined}
       onMouseLeave={() => setHoveredCell(null)}
     >
-      <div className="flex justify-center min-h-full">
-        <div className="relative min-w-fit px-3 sm:px-10 pt-6 pb-12">
+      <div className="flex justify-end sm:justify-center min-h-full">
+        <div className="relative min-w-fit pl-1 pr-3 sm:px-10 pt-6 pb-12 ml-7 sm:ml-0">
           <div className="absolute top-0" style={{ right: '100%' }}>
             <TagsSidebar
               birthYear={birthYear}
@@ -226,7 +226,7 @@ export default function Grid() {
             className="sticky top-0 z-10 flex items-center gap-1 pb-3 select-none"
             style={{ background: 'var(--bg-canvas)' }}
           >
-            <span className="w-12 sm:w-20 shrink-0" />
+            <span className="w-8 sm:w-20 shrink-0" />
             {MONTHS_SHORT.map((m, i) => (
               <span
                 key={m}
@@ -250,13 +250,13 @@ export default function Grid() {
                 <div key={year}>
                   {isDecade && (
                     <div className="flex items-center gap-1 my-2">
-                      <span className="w-12 sm:w-20 shrink-0" />
+                      <span className="w-8 sm:w-20 shrink-0" />
                       <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
                     </div>
                   )}
                   <div className="flex items-center gap-1">
                     <span
-                      className="w-12 sm:w-20 shrink-0 text-right pr-2 sm:pr-3 text-[10px] sm:text-[11px] tabular-nums select-none"
+                      className="w-8 sm:w-20 shrink-0 text-right pr-1 sm:pr-3 text-[10px] sm:text-[11px] tabular-nums select-none"
                       style={{
                         color: hoveredCell?.year === year ? 'var(--text-1)' : 'var(--text-3)',
                         fontWeight: hoveredCell?.year === year ? 700 : 400,
