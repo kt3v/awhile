@@ -119,3 +119,56 @@ textarea::placeholder { color: var(--text-3); }
   white-space: nowrap;
   user-select: none;
 }
+
+/* ── Tiptap / ProseMirror ───────────────────────────────── */
+.rich-editor-wrap {
+  min-height: 100%;
+}
+
+.rich-editor-wrap .ProseMirror {
+  outline: none;
+  min-height: 40vh;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.625;
+  color: var(--text-1);
+}
+
+.rich-editor-wrap .ProseMirror p {
+  margin: 0 0 0.25em;
+}
+
+.rich-editor-wrap .ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-editor-wrap .ProseMirror strong {
+  font-weight: 700;
+}
+
+.rich-editor-wrap .ProseMirror em {
+  font-style: italic;
+}
+
+.rich-editor-wrap .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.75em 0;
+  display: block;
+}
+
+.rich-editor-wrap .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Placeholder text */
+.rich-editor-wrap .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-3);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}

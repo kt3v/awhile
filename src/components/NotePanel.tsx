@@ -3,6 +3,11 @@ import { useStore, cellKey } from '../store/useStore';
 import { MONTHS_FULL, parseBirthDate } from '../utils/dates';
 import { TAG_COLOR_VAR } from '../utils/tagColors';
 import type { RangeTag } from '../types';
+import RichEditor, { type RichEditorHandle } from './RichEditor';
+
+function htmlCharCount(html: string): number {
+  return html.replace(/<[^>]*>/g, '').trim().length;
+}
 
 function tagsForYear(year: number, tags: RangeTag[]): RangeTag[] {
   return tags.filter((t) => year >= t.startYear && year <= t.endYear);
@@ -37,9 +42,9 @@ export default function NotePanel() {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<RichEditorHandle>(null);
 
   const tabs: Array<'month' | string> = selectedCell
     ? ['month', ...tagsForYear(selectedCell.year, rangeTags).map((t) => t.id)]
@@ -66,12 +71,6 @@ export default function NotePanel() {
     setIsRenameOpen(false);
     setRenameValue('');
   }, [selectedCell, selectedTagId]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => textareaRef.current?.focus(), 300);
-    }
-  }, [isOpen, activeTabId]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -118,17 +117,17 @@ export default function NotePanel() {
   }, [isRenameOpen]);
 
   const handleCellChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    (html: string) => {
       if (!selectedCell) return;
-      setNote(cellKey(selectedCell.year, selectedCell.month), e.target.value);
+      setNote(cellKey(selectedCell.year, selectedCell.month), html);
     },
     [selectedCell, setNote]
   );
 
   const handleTagNoteChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    (html: string) => {
       if (activeTabId === 'month') return;
-      updateRangeTagNote(activeTabId, e.target.value);
+      updateRangeTagNote(activeTabId, html);
     },
     [activeTabId, updateRangeTagNote]
   );
@@ -161,14 +160,14 @@ export default function NotePanel() {
     closeRename();
   }, [displayTag, renameRangeTag, renameValue, closeRename]);
 
-  const textareaValue = activeTabId === 'month' ? (note?.text ?? '') : (displayTag?.note ?? '');
-  const textareaOnChange = activeTabId === 'month' ? handleCellChange : handleTagNoteChange;
-  const textareaPlaceholder =
+  const editorValue = activeTabId === 'month' ? (note?.text ?? '') : (displayTag?.note ?? '');
+  const editorOnChange = activeTabId === 'month' ? handleCellChange : handleTagNoteChange;
+  const editorPlaceholder =
     activeTabId === 'month'
       ? 'Write something about this month…'
       : 'Write something about this period…';
-  const charCount =
-    activeTabId === 'month' ? (note?.text?.length ?? 0) : (displayTag?.note?.length ?? 0);
+  const editorKey = activeTabId === 'month' ? `cell-${cellKey_}` : `tag-${activeTabId}`;
+  const charCount = htmlCharCount(editorValue);
   const savedAt = activeTabId === 'month' ? note?.updatedAt : displayTag?.updatedAt;
 
   return (
@@ -332,13 +331,13 @@ export default function NotePanel() {
                 </div>
               </div>
 
-              {/* Tab bar — only shown when multiple tabs exist */}
-              {showTabs && (
-                <div
-                  className="flex overflow-x-auto"
-                  style={{ borderTop: '1px solid var(--border)' }}
-                >
-                  {tabs.map((tabId, idx) => {
+              {/* Tab bar — always rendered; tabs only shown when multiple exist */}
+              <div
+                className="flex items-center"
+                style={{ borderTop: '1px solid var(--border)' }}
+              >
+                <div className="flex flex-1 overflow-x-auto">
+                  {showTabs && tabs.map((tabId, idx) => {
                     const isActive = tabId === activeTabId;
                     if (tabId === 'month') {
                       return (
@@ -365,22 +364,19 @@ export default function NotePanel() {
                     );
                   })}
                 </div>
-              )}
+                <div className="shrink-0 px-3 flex items-center">
+                  <ImageInsertButton onClick={() => editorRef.current?.openImagePicker()} />
+                </div>
+              </div>
             </div>
 
-            <div
-              className="flex-1 overflow-y-auto"
-              style={{ overscrollBehavior: 'none' }}
-            >
-              <textarea
-                ref={textareaRef}
-                value={textareaValue}
-                onChange={textareaOnChange}
-                placeholder={textareaPlaceholder}
-                className="w-full min-h-full resize-none outline-none px-6 py-5 text-sm font-medium leading-relaxed"
-                style={{ background: 'transparent', color: 'var(--text-1)', display: 'block' }}
-              />
-            </div>
+            <RichEditor
+              ref={editorRef}
+              key={editorKey}
+              value={editorValue}
+              placeholder={editorPlaceholder}
+              onChange={editorOnChange}
+            />
 
             <PanelFooter savedAt={savedAt} charCount={charCount} />
 
@@ -455,6 +451,40 @@ export default function NotePanel() {
         )}
       </aside>
     </>
+  );
+}
+
+function ImageInsertButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Insert image"
+      title="Insert image"
+      className="p-1.5 transition-colors duration-150"
+      style={{
+        color: 'var(--text-3)',
+        background: 'transparent',
+        border: '1px solid transparent',
+        borderRadius: '6px',
+        lineHeight: 0,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = 'var(--text-2)';
+        e.currentTarget.style.background = 'var(--bg-secondary)';
+        e.currentTarget.style.borderColor = 'var(--border)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = 'var(--text-3)';
+        e.currentTarget.style.background = 'transparent';
+        e.currentTarget.style.borderColor = 'transparent';
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M1.5 9.5l3-3.5 2.5 2.5 2-2 3 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="5" cy="5.5" r="1" fill="currentColor" />
+      </svg>
+    </button>
   );
 }
 
