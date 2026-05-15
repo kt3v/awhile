@@ -194,12 +194,17 @@ export default function NotePanel() {
           <>
             <div style={{ background: 'var(--bg-header)', borderBottom: '1px solid var(--border)' }}>
               {/* Title + action buttons */}
-              <div className="flex items-start justify-between px-6 pt-5 pb-4">
-                <div>
+              <div className="flex items-center px-6 pt-5 pb-4 gap-3">
+                {/* Mobile: back arrow on the left */}
+                <div className="sm:hidden flex items-center shrink-0">
+                  <BackButton onClick={closePanel} />
+                </div>
+
+                <div className="flex-1 min-w-0">
                   {activeTabId === 'month' && selectedCell ? (
-                    <>
+                    <div className="flex items-center gap-2.5">
                       <h2
-                        className="text-[18px] leading-tight"
+                        className="text-[18px] leading-tight shrink-0"
                         style={{
                           fontFamily: "'Lora', Georgia, serif",
                           fontWeight: 560,
@@ -209,15 +214,15 @@ export default function NotePanel() {
                       >
                         {MONTHS_FULL[selectedCell.month]} {selectedCell.year}
                       </h2>
-                      <p className="text-xs mt-1 font-medium" style={{ color: 'var(--text-3)' }}>
+                      <span className="text-xs font-medium shrink-0" style={{ color: 'var(--text-3)' }}>
                         Age {selectedCell.year - (birthYear ?? selectedCell.year)}
-                      </p>
-                    </>
+                      </span>
+                    </div>
                   ) : displayTag ? (
-                    <>
-                      <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2 shrink-0">
                         <div
-                          className="w-2.5 h-2.5 rounded-sm shrink-0"
+                          className="w-2.5 h-2.5 rounded-sm shrink-0 self-center"
                           style={{ background: TAG_COLOR_VAR[displayTag.color] }}
                         />
                         <h2
@@ -232,16 +237,16 @@ export default function NotePanel() {
                           {displayTag.label}
                         </h2>
                       </div>
-                      <p className="text-xs mt-1 font-medium" style={{ color: 'var(--text-3)' }}>
+                      <span className="text-xs font-medium shrink-0" style={{ color: 'var(--text-3)' }}>
                         {displayTag.startYear === displayTag.endYear
                           ? `${displayTag.startYear}`
                           : `${displayTag.startYear} – ${displayTag.endYear}`}
-                      </p>
-                    </>
+                      </span>
+                    </div>
                   ) : null}
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 ml-auto shrink-0">
                   {displayTag && (
                     <div className="relative" ref={menuRef}>
                       <button
@@ -320,7 +325,10 @@ export default function NotePanel() {
                       )}
                     </div>
                   )}
-                  <CloseButton onClick={closePanel} />
+                  {/* Desktop: close X on the right */}
+                  <div className="hidden sm:block">
+                    <CloseButton onClick={closePanel} />
+                  </div>
                 </div>
               </div>
 
@@ -526,6 +534,36 @@ function CloseButton({ onClick }: { onClick: () => void }) {
     >
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
         <path d="M11 3L3 11M3 3l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </button>
+  );
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Go back"
+      className="p-1.5 transition-colors duration-150"
+      style={{
+        color: 'var(--text-3)',
+        background: 'transparent',
+        border: '1px solid transparent',
+        borderRadius: '8px',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = 'var(--text-1)';
+        e.currentTarget.style.background = 'var(--bg-secondary)';
+        e.currentTarget.style.borderColor = 'var(--border)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = 'var(--text-3)';
+        e.currentTarget.style.background = 'transparent';
+        e.currentTarget.style.borderColor = 'transparent';
+      }}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </button>
   );
