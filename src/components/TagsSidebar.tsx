@@ -99,6 +99,102 @@ function assignTagPositions(tags: RangeTag[], birthYear: number): Map<string, { 
   return positions;
 }
 
+function AddTagModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: (label: string) => void;
+  onCancel: () => void;
+}) {
+  const [label, setLabel] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  function handleSubmit() {
+    if (!label.trim()) return;
+    onConfirm(label.trim());
+  }
+
+  return (
+    <div
+      className="fixed inset-0 flex items-end justify-center z-50 p-4"
+      style={{ background: 'var(--scrim)', backdropFilter: 'blur(4px)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
+    >
+      <div
+        className="w-full max-w-sm overflow-hidden"
+        style={{
+          background: 'var(--bg-primary)',
+          border: '1px solid var(--border)',
+          borderRadius: '16px',
+          boxShadow: 'var(--shadow-xl)',
+          marginBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
+      >
+        <div className="p-5 flex flex-col gap-4">
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-1)' }}>
+            Add tag
+          </p>
+          <input
+            ref={inputRef}
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSubmit();
+              if (e.key === 'Escape') onCancel();
+            }}
+            placeholder="Tag name…"
+            className="w-full text-sm font-medium outline-none transition-all duration-150"
+            style={{
+              background: 'var(--bg-secondary)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              color: 'var(--text-1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.background = 'var(--bg-primary)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(245,197,24,0.5)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.background = 'var(--bg-secondary)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={onCancel}
+              className="flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-150"
+              style={{
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-2)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!label.trim()}
+              className="flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-150"
+              style={{
+                background: label.trim() ? 'var(--mustard)' : 'var(--bg-secondary)',
+                color: label.trim() ? '#000' : 'var(--text-3)',
+                border: '1px solid transparent',
+              }}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   birthYear: number;
   selectedRange: { start: CellId; end: CellId } | null;
@@ -120,6 +216,7 @@ export default function TagsSidebar({
   const selectTag = useStore((s) => s.selectTag);
 
   const [showForm, setShowForm] = useState(false);
+  const [showMobileModal, setShowMobileModal] = useState(false);
   const [formLabel, setFormLabel] = useState('');
   const [localHovered, setLocalHovered] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -128,6 +225,7 @@ export default function TagsSidebar({
   useEffect(() => {
     if (!selectedRange) {
       setShowForm(false);
+      setShowMobileModal(false);
       setFormLabel('');
     }
   }, [selectedRange]);
@@ -299,7 +397,7 @@ export default function TagsSidebar({
       {/* "Add tag" button — right-aligned (closest to grid) */}
       {selectedRange && !showForm && (
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => isMobile ? setShowMobileModal(true) : setShowForm(true)}
           style={{
             position: 'absolute',
             top: addButtonTop,
@@ -328,6 +426,33 @@ export default function TagsSidebar({
           </svg>
           Add tag
         </button>
+      )}
+
+      {/* Mobile modal */}
+      {showMobileModal && (
+        <AddTagModal
+          onConfirm={(label) => {
+            if (!selectedRange) return;
+            const startLinear = selectedRange.start.year * 12 + selectedRange.start.month;
+            const endLinear = selectedRange.end.year * 12 + selectedRange.end.month;
+            const [from, to] = startLinear <= endLinear
+              ? [selectedRange.start, selectedRange.end]
+              : [selectedRange.end, selectedRange.start];
+            addRangeTag({
+              label,
+              color: randomTagColor(),
+              startYear: from.year,
+              startMonth: from.month,
+              endYear: to.year,
+              endMonth: to.month,
+              note: '',
+              updatedAt: null,
+            });
+            onClearRange();
+            setShowMobileModal(false);
+          }}
+          onCancel={() => setShowMobileModal(false)}
+        />
       )}
 
       {/* Inline add form — right-aligned */}
