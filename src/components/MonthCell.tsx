@@ -49,8 +49,8 @@ const MonthCell = memo(({ year, month, note, isSelected, isInRange, isRangeEnd, 
     };
   } else if (hoveredColor) {
     extraStyle = {
-      background: `color-mix(in srgb, ${hoveredColor} 55%, var(--bg-canvas))`,
-      outline: `1px solid color-mix(in srgb, ${hoveredColor} 80%, transparent)`,
+      background: `color-mix(in srgb, ${hoveredColor} 30%, var(--bg-canvas))`,
+      outline: `1px solid color-mix(in srgb, ${hoveredColor} 60%, transparent)`,
       outlineOffset: '-1px',
     };
   } else if (current) {
@@ -87,7 +87,7 @@ const MonthCell = memo(({ year, month, note, isSelected, isInRange, isRangeEnd, 
                   right: 0,
                   height: `${100 / N}%`,
                   bottom: `${(i / N) * 100}%`,
-                  background: `color-mix(in srgb, ${colorVar} 55%, transparent)`,
+                  background: `color-mix(in srgb, ${colorVar} 20%, transparent)`,
                 }}
               />
             ))}
