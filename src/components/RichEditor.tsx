@@ -92,7 +92,7 @@ const RichEditor = forwardRef<RichEditorHandle, Props>(function RichEditor(
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ overscrollBehavior: 'none' }}>
-      <EditorContent editor={editor} className="rich-editor-wrap px-6 py-5" />
+      <EditorContent editor={editor} className="rich-editor-wrap px-10 py-5" />
       <input
         ref={fileInputRef}
         type="file"
