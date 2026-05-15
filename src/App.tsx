@@ -23,8 +23,8 @@ export default function App() {
 
   return (
     <div
-      className="h-screen flex flex-col overflow-hidden font-ui"
-      style={{ background: 'var(--bg-canvas)', color: 'var(--text-1)' }}
+      className="flex flex-col overflow-hidden font-ui"
+      style={{ height: '100dvh', background: 'var(--bg-canvas)', color: 'var(--text-1)' }}
     >
       <div className="relative flex flex-1 overflow-hidden">
         <main className="flex flex-1 overflow-hidden">

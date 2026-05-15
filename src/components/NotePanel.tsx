@@ -182,7 +182,7 @@ export default function NotePanel() {
 
       <aside
         className={[
-          'absolute right-0 top-0 bottom-0 w-full sm:w-[700px] flex flex-col z-20 transition-transform duration-300 ease-in-out',
+          'absolute right-0 top-0 bottom-0 w-full sm:w-[700px] flex flex-col z-20 transition-transform duration-300 ease-in-out overflow-hidden',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         ].join(' ')}
         style={{
@@ -368,14 +368,19 @@ export default function NotePanel() {
               )}
             </div>
 
-            <textarea
-              ref={textareaRef}
-              value={textareaValue}
-              onChange={textareaOnChange}
-              placeholder={textareaPlaceholder}
-              className="flex-1 resize-none outline-none px-6 py-5 text-sm font-medium leading-relaxed"
-              style={{ background: 'transparent', color: 'var(--text-1)' }}
-            />
+            <div
+              className="flex-1 overflow-y-auto"
+              style={{ overscrollBehavior: 'none' }}
+            >
+              <textarea
+                ref={textareaRef}
+                value={textareaValue}
+                onChange={textareaOnChange}
+                placeholder={textareaPlaceholder}
+                className="w-full min-h-full resize-none outline-none px-6 py-5 text-sm font-medium leading-relaxed"
+                style={{ background: 'transparent', color: 'var(--text-1)', display: 'block' }}
+              />
+            </div>
 
             <PanelFooter savedAt={savedAt} charCount={charCount} />
 

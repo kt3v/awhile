@@ -98,6 +98,7 @@ html, body, #root {
   background-color: var(--bg-canvas);
   font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
 }
 
 input[type="date"] { color-scheme: light; }
