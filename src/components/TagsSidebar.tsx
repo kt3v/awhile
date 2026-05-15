@@ -9,8 +9,10 @@ const DECADE_EXTRA = 17; // my-2 (8+8) + h-px (1)
 const CELL_HEIGHT = 20;
 
 const CHIP_HEIGHT = 20;
-const CHIP_MAX_WIDTH = 78;
-const COL_WIDTH = 82;    // chip max-width + gap
+const MOBILE_CHIP_MAX_WIDTH = 78;
+const DESKTOP_CHIP_MAX_WIDTH = MOBILE_CHIP_MAX_WIDTH * 3;
+const MOBILE_COL_WIDTH = 82;    // chip max-width + gap
+const DESKTOP_COL_WIDTH = DESKTOP_CHIP_MAX_WIDTH + 8;
 const CHIP_GAP = 4;
 const MAX_VERTICAL_SHIFT = 32;
 
@@ -180,15 +182,17 @@ export default function TagsSidebar({
   const numColumns = positionMap.size > 0
     ? Math.max(...Array.from(positionMap.values(), (v) => v.col)) + 1
     : 0;
+  const chipMaxWidth = isMobile ? MOBILE_CHIP_MAX_WIDTH : DESKTOP_CHIP_MAX_WIDTH;
+  const colWidth = isMobile ? MOBILE_COL_WIDTH : DESKTOP_COL_WIDTH;
 
   // Sidebar width: columns stack leftward from the right edge (closest to grid).
   // Column 0 is rightmost (right: 0), column 1 is COL_WIDTH further left, etc.
-  const sidebarWidth = numColumns * COL_WIDTH + CHIP_MAX_WIDTH;
+  const sidebarWidth = numColumns * colWidth + chipMaxWidth;
 
   const addButtonLocalPos = draftLayout?.draftPos ?? { col: 0, top: 0 };
   const addButtonCol = isMobile ? 0 : addButtonLocalPos.col;
   const addButtonTop = topOffset + addButtonLocalPos.top;
-  const addButtonRight = isMobile ? 0 : addButtonCol * COL_WIDTH;
+  const addButtonRight = isMobile ? 0 : addButtonCol * colWidth;
 
   function handleSubmit() {
     if (!selectedRange || !formLabel.trim()) return;
@@ -219,15 +223,16 @@ export default function TagsSidebar({
 
   return (
     <div
+      data-tags-sidebar
       className="relative shrink-0 pb-12"
-      style={{ width: sidebarWidth, minWidth: CHIP_MAX_WIDTH + 2 }}
+      style={{ width: sidebarWidth, minWidth: chipMaxWidth + 2 }}
     >
       {/* Tag chips — anchored from the right (closest to grid) */}
       {rangeTags.map((tag) => {
         const pos = positionMap.get(tag.id) ?? { col: 0, top: 0 };
         const chipTop = topOffset + pos.top;
         // Column 0 = rightmost; each extra column goes further left
-        const chipRight = pos.col * COL_WIDTH;
+        const chipRight = pos.col * colWidth;
         const isHov = localHovered === tag.id;
         const isSel = selectedTagId === tag.id;
         const colorVar = TAG_COLOR_VAR[tag.color];
@@ -242,7 +247,7 @@ export default function TagsSidebar({
               top: chipTop,
               right: chipRight,
               height: CHIP_HEIGHT,
-              maxWidth: CHIP_MAX_WIDTH,
+              maxWidth: chipMaxWidth,
               padding: '0 5px',
               borderRadius: 999,
               background: isHov || isSel
@@ -332,8 +337,8 @@ export default function TagsSidebar({
             position: 'absolute',
             top: addButtonTop,
             right: isMobile ? undefined : addButtonRight,
-            left: isMobile ? `calc(100% - ${CHIP_MAX_WIDTH}px)` : undefined,
-            transform: isMobile ? `translateX(${CHIP_MAX_WIDTH + 4}px)` : undefined,
+            left: isMobile ? `calc(100% - ${chipMaxWidth}px)` : undefined,
+            transform: isMobile ? `translateX(${chipMaxWidth + 4}px)` : undefined,
             display: 'flex',
             alignItems: 'center',
             gap: 4,

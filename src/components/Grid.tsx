@@ -203,11 +203,20 @@ export default function Grid() {
   const hoveredTag = hoveredTagId ? rangeTags.find((t) => t.id === hoveredTagId) : null;
   const topOffset = 24 + headerHeight; // pt-6 + measured header height
 
+  const handleCanvasPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!selectedRange) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('button[data-cell-year][data-cell-month]')) return;
+    if (target.closest('[data-tags-sidebar]')) return;
+    setSelectedRange(null);
+  }, [selectedRange]);
+
   return (
     <div
       className="flex-1 overflow-y-auto overflow-x-hidden no-touch-select"
       style={drag ? { cursor: 'crosshair' } : undefined}
       onMouseLeave={() => setHoveredCell(null)}
+      onPointerDown={handleCanvasPointerDown}
     >
       <div className="flex justify-end sm:justify-center min-h-full">
         <div className="relative min-w-fit pl-1 pr-3 sm:px-10 pt-6 pb-12 ml-7 sm:ml-0">
