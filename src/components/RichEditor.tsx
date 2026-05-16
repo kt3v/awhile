@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { uploadImage } from '../lib/imageStorage';
 
 function toHtml(stored: string): string {
   if (!stored) return '';
@@ -54,16 +55,13 @@ const RichEditor = forwardRef<RichEditorHandle, Props>(function RichEditor(
             event.preventDefault();
             const file = item.getAsFile();
             if (!file) continue;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const src = e.target?.result as string;
+            uploadImage(file).then((src) => {
               view.dispatch(
                 view.state.tr.replaceSelectionWith(
                   view.state.schema.nodes.image.create({ src })
                 )
               );
-            };
-            reader.readAsDataURL(file);
+            });
             return true;
           }
         }
@@ -81,13 +79,10 @@ const RichEditor = forwardRef<RichEditorHandle, Props>(function RichEditor(
   const insertImageFile = () => {
     const file = fileInputRef.current?.files?.[0];
     if (!file || !editor) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const src = e.target?.result as string;
-      editor.chain().focus().setImage({ src }).run();
-    };
-    reader.readAsDataURL(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    uploadImage(file).then((src) => {
+      editor.chain().focus().setImage({ src }).run();
+    });
   };
 
   return (
