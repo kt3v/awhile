@@ -14,7 +14,7 @@ There is no test suite.
 
 ## Architecture
 
-**Life in Months** — a purely client-side React app that renders a person's life as a scrollable grid of month cells, one row per year. No backend; all data lives in `localStorage` via Zustand's `persist` middleware (key: `lifenotes-storage`, schema version 2).
+**Life in Months** — a React app that renders a person's life as a scrollable grid of month cells, one row per year. All data is persisted server-side via a `/api/data` endpoint (GET/PUT JSON file) using Zustand's `persist` middleware with a custom `apiStorage` adapter (`src/lib/apiStorage.ts`). There is no localStorage usage.
 
 ### State (`src/store/useStore.ts`)
 
@@ -25,7 +25,7 @@ Single Zustand store, persisted. Key slices:
 - `rangeTags` (`RangeTag[]`) — user-drawn year-range annotations with a label, color, and freeform note.
 - `theme` — `'light' | 'dark'`; applied by toggling `.dark` on `<html>` in `App.tsx`.
 
-Store migrations live at the bottom of `useStore.ts`; bump `version` and add a migration case whenever the persisted shape changes.
+Store schema migrations live at the bottom of `useStore.ts`; bump `version` and add a migration case whenever the persisted shape changes. Current schema version: 3.
 
 ### Component tree
 

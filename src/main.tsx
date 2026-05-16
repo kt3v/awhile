@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { migrateFromLocalStorage } from './lib/migrateFromLocalStorage';
 import { useStore } from './store/useStore';
 
 document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
@@ -23,7 +22,6 @@ document.addEventListener('touchend', (e) => {
 }, { passive: false });
 
 async function init() {
-  await migrateFromLocalStorage();
   await useStore.persist.rehydrate();
 }
 
