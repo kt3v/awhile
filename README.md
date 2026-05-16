@@ -2,20 +2,41 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-**awhile** is a personal life timeline application that renders your life as a scrollable grid of months, with one row per year. It allows you to add notes to any month and mark life periods with color-coded range tags.
+**awhile** is a private map of your life, month by month.
+
+It turns your life into a simple scrollable grid: one row per year, one square per month. Add memories, write about what is happening right now, mark important chapters, and slowly build a personal archive of the moments and seasons that shaped you.
+
+Use it as a memory map, a visual diary, or a quiet place to step back and see how your life is unfolding.
 
 <img src="screenshot.png" width="300" />
 
-## Features
+## Why awhile?
 
-- **Visual Life Grid:** See your entire life at a glance, organized by years and months.
-- **Monthly Notes:** Capture memories, milestones, or thoughts for any specific month.
-- **Color-Coded Tags:** Mark significant life periods (e.g., "University," "Living in Berlin," "First Job") with range tags.
-- **Self-Hosted & Private:** All data is stored locally — no cloud, no tracking.
+Most calendars are built for what comes next. awhile is built for what has already happened, what is happening now, and what you want to remember.
+
+It is not a productivity dashboard. It is a small personal archive: a place for life chapters, quiet milestones, moves, relationships, jobs, projects, grief, recovery, travel, ordinary months, and everything that does not fit neatly into a task list.
+
+awhile can be retrospective, but it does not have to be only about the past. You can use it as a personal diary too: write about the current month, save what happened today, attach images, and let the archive grow as life unfolds.
+
+## What you can do
+
+- **See your life at a glance:** Every year becomes a row, every month becomes a cell.
+- **Use it as a personal diary:** Write about the month you are living through right now. Capture current events, thoughts, photos, decisions, moods, and small details before they blur.
+- **Remember specific moments:** Add notes, images, memories, milestones, or reflections to any month.
+- **Mark life chapters:** Use colored ranges for periods like university, a city you lived in, a relationship, a job, a project, or a difficult season.
+- **Keep it private:** awhile is self-hosted. Your data stays with you, stored as plain files on your own machine or server.
+
+## Privacy
+
+No accounts. No tracking. No cloud sync by default.
+
+Your notes, tags, settings, and uploaded images are stored in the local `data/` directory. Backing up your life timeline is as simple as copying that folder.
 
 ---
 
 ## Quick Start
+
+awhile runs on your own computer or server. Once installed, you open it in a browser and your data is saved locally in the project's `data/` folder.
 
 ### Prerequisites
 
@@ -88,3 +109,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md)
 ## License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See the [LICENSE](LICENSE) file for the full text.
+
+<p align="center">
+  <a href="https://x.com/1hrOk" style="text-decoration: none;">weird_drop ✖ indie-indie</a>
+</p>
