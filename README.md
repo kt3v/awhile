@@ -4,14 +4,14 @@
 
 **awhile** is a personal life timeline application that renders your life as a scrollable grid of months, with one row per year. It allows you to add notes to any month and mark life periods with color-coded range tags.
 
-![Screenshot Placeholder](screenshot.png)
+![](screenshot.png)
 
 ## Features
 
 - **Visual Life Grid:** See your entire life at a glance, organized by years and months.
 - **Monthly Notes:** Capture memories, milestones, or thoughts for any specific month.
 - **Color-Coded Tags:** Mark significant life periods (e.g., "University," "Living in Berlin," "First Job") with range tags.
-- **Self-Hosted & Private:** All data is stored locally in a single, human-readable JSON file. No cloud, no tracking.
+- **Self-Hosted & Private:** All data is stored locally — no cloud, no tracking.
 
 ---
 
@@ -69,42 +69,15 @@ The restart automatically rebuilds the frontend before launching.
 
 ### Data & Backups
 
-All your data is stored in `./data/awhile.json`. This file is created automatically on the first run.
+All your data lives in the `./data/` directory, created automatically on first run:
+
+- `data/awhile.json` — notes, tags, and settings (plain JSON)
+- `data/images/` — uploaded images referenced by notes
 
 **To create a backup:**
 ```bash
-cp data/awhile.json data/awhile.backup.json
+cp -r data/ data.backup/
 ```
-
-The data format is plain JSON, making it easy to export or manipulate if needed.
-
----
-
-## Configuration
-
-You can customize the application behavior using environment variables.
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT`   | `3001`  | The internal port the API server listens on. |
-
-**Example with a custom port:**
-
-```bash
-PORT=4000 npm start
-```
-
----
-
-## Development
-
-If you want to contribute, you'll need [Node.js](https://nodejs.org/) 20+. After cloning and running `npm install`, start the dev server:
-
-```bash
-npm run dev
-```
-
-The app will be available at [http://localhost:5173](http://localhost:5173) (Vite + API server running concurrently).
 
 ---
 
