@@ -376,6 +376,24 @@ export default function SettingsModal() {
 
           <ThemeToggle />
 
+          <div
+            className="flex flex-col gap-2 rounded-xl p-3"
+            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
+          >
+            <p className="text-[11px] font-medium" style={{ color: 'var(--text-3)' }}>
+              You can find answers to common questions here.
+            </p>
+            <a
+              href="https://go.levelry.app/project/aa9851c4-a134-4499-8c14-391b2714a45b"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-2 text-xs font-semibold rounded-lg text-center transition-all duration-150"
+              style={{ background: 'var(--mustard)', color: '#000' }}
+            >
+              Open Awhile Docs
+            </a>
+          </div>
+
           {isInitial && (
             <button
               onClick={() => canSave && saveSettings({ birthDate, totalYears })}
