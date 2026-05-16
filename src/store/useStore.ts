@@ -24,6 +24,7 @@ interface Store {
   deleteRangeTag: (id: string) => void;
   updateRangeTagNote: (id: string, note: string) => void;
   renameRangeTag: (id: string, label: string) => void;
+  updateRangeTagDates: (id: string, startYear: number, startMonth: number, endYear: number, endMonth: number) => void;
   selectTag: (id: string | null) => void;
   hydrated: boolean;
   setHydrated: (v: boolean) => void;
@@ -84,6 +85,13 @@ export const useStore = create<Store>()(
         set((state) => ({
           rangeTags: state.rangeTags.map((t) =>
             t.id === id ? { ...t, label: label.trim(), updatedAt: new Date().toISOString() } : t
+          ),
+        })),
+
+      updateRangeTagDates: (id, startYear, startMonth, endYear, endMonth) =>
+        set((state) => ({
+          rangeTags: state.rangeTags.map((t) =>
+            t.id === id ? { ...t, startYear, startMonth, endYear, endMonth } : t
           ),
         })),
 

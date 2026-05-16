@@ -5,6 +5,8 @@ import { TAG_COLOR_VAR } from '../utils/tagColors';
 import type { RangeTag } from '../types';
 import RichEditor, { type RichEditorHandle } from './RichEditor';
 
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 function htmlCharCount(html: string): number {
   return html.replace(/<[^>]*>/g, '').trim().length;
 }
@@ -33,6 +35,7 @@ export default function NotePanel() {
   const updateRangeTagNote = useStore((s) => s.updateRangeTagNote);
   const deleteRangeTag = useStore((s) => s.deleteRangeTag);
   const renameRangeTag = useStore((s) => s.renameRangeTag);
+  const updateRangeTagDates = useStore((s) => s.updateRangeTagDates);
 
   const primaryTag = selectedTagId ? (rangeTags.find((t) => t.id === selectedTagId) ?? null) : null;
   const isOpen = !!selectedCell || !!primaryTag;
@@ -41,9 +44,16 @@ export default function NotePanel() {
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false);
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+  const [isChangeDatesOpen, setIsChangeDatesOpen] = useState(false);
+  const [dateStartYear, setDateStartYear] = useState('');
+  const [dateStartMonth, setDateStartMonth] = useState(0);
+  const [dateEndYear, setDateEndYear] = useState('');
+  const [dateEndMonth, setDateEndMonth] = useState(11);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
+  const dateStartYearRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<RichEditorHandle>(null);
 
   const tabs: Array<'month' | string> = selectedCell
@@ -70,10 +80,20 @@ export default function NotePanel() {
     setIsTagMenuOpen(false);
     setIsRenameOpen(false);
     setRenameValue('');
+    setIsChangeDatesOpen(false);
+    setIsDeleteConfirmOpen(false);
   }, [selectedCell, selectedTagId]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDeleteConfirmOpen) {
+        setIsDeleteConfirmOpen(false);
+        return;
+      }
+      if (e.key === 'Escape' && isChangeDatesOpen) {
+        setIsChangeDatesOpen(false);
+        return;
+      }
       if (e.key === 'Escape' && isRenameOpen) {
         setIsRenameOpen(false);
         setRenameValue('');
@@ -90,7 +110,7 @@ export default function NotePanel() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selectedCell, selectedTagId, selectCell, selectTag, isTagMenuOpen, isRenameOpen]);
+  }, [selectedCell, selectedTagId, selectCell, selectTag, isTagMenuOpen, isRenameOpen, isChangeDatesOpen, isDeleteConfirmOpen]);
 
   useEffect(() => {
     const onPointerDown = (e: PointerEvent) => {
@@ -115,6 +135,15 @@ export default function NotePanel() {
       }, 0);
     }
   }, [isRenameOpen]);
+
+  useEffect(() => {
+    if (isChangeDatesOpen) {
+      setTimeout(() => {
+        dateStartYearRef.current?.focus();
+        dateStartYearRef.current?.select();
+      }, 0);
+    }
+  }, [isChangeDatesOpen]);
 
   const handleCellChange = useCallback(
     (html: string) => {
@@ -143,6 +172,29 @@ export default function NotePanel() {
     setIsRenameOpen(true);
     setIsTagMenuOpen(false);
   }, [displayTag]);
+
+  const openChangeDates = useCallback(() => {
+    if (!displayTag) return;
+    setDateStartYear(String(displayTag.startYear));
+    setDateStartMonth(displayTag.startMonth);
+    setDateEndYear(String(displayTag.endYear));
+    setDateEndMonth(displayTag.endMonth);
+    setIsChangeDatesOpen(true);
+    setIsTagMenuOpen(false);
+  }, [displayTag]);
+
+  const closeChangeDates = useCallback(() => {
+    setIsChangeDatesOpen(false);
+  }, []);
+
+  const submitChangeDates = useCallback(() => {
+    if (!displayTag) return;
+    const sy = parseInt(dateStartYear, 10);
+    const ey = parseInt(dateEndYear, 10);
+    if (!sy || !ey || sy > ey) return;
+    updateRangeTagDates(displayTag.id, sy, dateStartMonth, ey, dateEndMonth);
+    closeChangeDates();
+  }, [displayTag, dateStartYear, dateStartMonth, dateEndYear, dateEndMonth, updateRangeTagDates, closeChangeDates]);
 
   const closeRename = useCallback(() => {
     setIsRenameOpen(false);
@@ -282,6 +334,7 @@ export default function NotePanel() {
                             border: '1px solid var(--border)',
                             borderRadius: 10,
                             boxShadow: 'var(--shadow-sm)',
+                            zIndex: 50,
                           }}
                         >
                           <button
@@ -298,14 +351,21 @@ export default function NotePanel() {
                             Rename tag
                           </button>
                           <button
+                            onClick={openChangeDates}
+                            className="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-150"
+                            style={{ color: 'var(--text-1)', background: 'transparent' }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'var(--bg-secondary)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'transparent';
+                            }}
+                          >
+                            Change date range
+                          </button>
+                          <button
                             onClick={() => {
-                              const nextTabId = tabs.find((id) => id !== displayTag.id);
-                              deleteRangeTag(displayTag.id);
-                              if (selectedTagId === displayTag.id) {
-                                selectTag(null);
-                              } else {
-                                setActiveTabId(nextTabId ?? 'month');
-                              }
+                              setIsDeleteConfirmOpen(true);
                               setIsTagMenuOpen(false);
                             }}
                             className="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-150"
@@ -442,6 +502,188 @@ export default function NotePanel() {
                       }}
                     >
                       Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isChangeDatesOpen && displayTag && (
+              <div
+                className="absolute inset-0 z-30 flex items-center justify-center px-4"
+                style={{ background: 'color-mix(in srgb, var(--bg-canvas) 60%, transparent)' }}
+                onClick={closeChangeDates}
+              >
+                <div
+                  className="w-full max-w-sm rounded-xl p-4"
+                  style={{
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--border)',
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-1)' }}>
+                    Change date range
+                  </h3>
+                  <div className="flex flex-col gap-3">
+                    <div>
+                      <p className="text-xs font-medium mb-1.5" style={{ color: 'var(--text-3)' }}>From</p>
+                      <div className="flex gap-2">
+                        <select
+                          value={dateStartMonth}
+                          onChange={(e) => setDateStartMonth(Number(e.target.value))}
+                          className="h-10 px-2 text-sm rounded-lg outline-none flex-1"
+                          style={{
+                            background: 'var(--bg-primary)',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-1)',
+                          }}
+                        >
+                          {MONTHS_SHORT.map((m, i) => (
+                            <option key={i} value={i}>{m}</option>
+                          ))}
+                        </select>
+                        <input
+                          ref={dateStartYearRef}
+                          type="number"
+                          value={dateStartYear}
+                          onChange={(e) => setDateStartYear(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') submitChangeDates();
+                            if (e.key === 'Escape') closeChangeDates();
+                          }}
+                          placeholder="Year"
+                          className="h-10 px-3 text-sm rounded-lg outline-none w-24"
+                          style={{
+                            background: 'var(--bg-primary)',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-1)',
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium mb-1.5" style={{ color: 'var(--text-3)' }}>To</p>
+                      <div className="flex gap-2">
+                        <select
+                          value={dateEndMonth}
+                          onChange={(e) => setDateEndMonth(Number(e.target.value))}
+                          className="h-10 px-2 text-sm rounded-lg outline-none flex-1"
+                          style={{
+                            background: 'var(--bg-primary)',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-1)',
+                          }}
+                        >
+                          {MONTHS_SHORT.map((m, i) => (
+                            <option key={i} value={i}>{m}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="number"
+                          value={dateEndYear}
+                          onChange={(e) => setDateEndYear(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') submitChangeDates();
+                            if (e.key === 'Escape') closeChangeDates();
+                          }}
+                          placeholder="Year"
+                          className="h-10 px-3 text-sm rounded-lg outline-none w-24"
+                          style={{
+                            background: 'var(--bg-primary)',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-1)',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-end gap-2">
+                    <button
+                      onClick={closeChangeDates}
+                      className="px-3 h-9 rounded-lg text-sm font-medium"
+                      style={{
+                        color: 'var(--text-2)',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={submitChangeDates}
+                      disabled={!dateStartYear || !dateEndYear || parseInt(dateStartYear) > parseInt(dateEndYear)}
+                      className="px-3 h-9 rounded-lg text-sm font-medium"
+                      style={{
+                        color: '#fff',
+                        background: (!dateStartYear || !dateEndYear || parseInt(dateStartYear) > parseInt(dateEndYear))
+                          ? 'var(--bg-secondary)'
+                          : 'var(--blue)',
+                        border: '1px solid transparent',
+                        opacity: (!dateStartYear || !dateEndYear || parseInt(dateStartYear) > parseInt(dateEndYear)) ? 0.65 : 1,
+                        cursor: (!dateStartYear || !dateEndYear || parseInt(dateStartYear) > parseInt(dateEndYear)) ? 'default' : 'pointer',
+                      }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isDeleteConfirmOpen && displayTag && (
+              <div
+                className="absolute inset-0 z-30 flex items-center justify-center px-4"
+                style={{ background: 'color-mix(in srgb, var(--bg-canvas) 60%, transparent)' }}
+                onClick={() => setIsDeleteConfirmOpen(false)}
+              >
+                <div
+                  className="w-full max-w-sm rounded-xl p-4"
+                  style={{
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--border)',
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--text-1)' }}>
+                    Delete «{displayTag.label}»?
+                  </h3>
+                  <p className="text-sm mb-4" style={{ color: 'var(--text-3)' }}>
+                    The tag and its note will be permanently removed.
+                  </p>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => setIsDeleteConfirmOpen(false)}
+                      className="px-3 h-9 rounded-lg text-sm font-medium"
+                      style={{
+                        color: 'var(--text-2)',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        const nextTabId = tabs.find((id) => id !== displayTag.id);
+                        deleteRangeTag(displayTag.id);
+                        setIsDeleteConfirmOpen(false);
+                        if (selectedTagId === displayTag.id) {
+                          selectTag(null);
+                        } else {
+                          setActiveTabId(nextTabId ?? 'month');
+                        }
+                      }}
+                      className="px-3 h-9 rounded-lg text-sm font-medium"
+                      style={{
+                        color: '#fff',
+                        background: '#C8523A',
+                        border: '1px solid transparent',
+                      }}
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>
