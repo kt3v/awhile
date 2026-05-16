@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Grid from './components/Grid';
 import NotePanel from './components/NotePanel';
 import SettingsModal from './components/SettingsModal';
 import PasswordModal from './components/PasswordModal';
 import { useStore } from './store/useStore';
 
+const LOCK_AFTER_MS = 60_000;
+
 export default function App() {
   const hydrated = useStore((s) => s.hydrated);
   const openSettings = useStore((s) => s.openSettings);
   const theme = useStore((s) => s.theme);
+  const settings = useStore((s) => s.settings);
+  const unlocked = useStore((s) => s.unlocked);
+  const setUnlocked = useStore((s) => s.setUnlocked);
+  const hiddenAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -18,6 +24,41 @@ export default function App() {
       html.classList.remove('dark');
     }
   }, [theme]);
+
+  useEffect(() => {
+    console.log('[lock] effect run — passwordEnabled:', settings?.passwordEnabled, '| unlocked:', unlocked);
+
+    if (!settings?.passwordEnabled) {
+      console.log('[lock] skipping — password not enabled');
+      return;
+    }
+
+    console.log('[lock] registering visibilitychange listener');
+
+    function onVisibility() {
+      console.log('[lock] visibilitychange fired — hidden:', document.hidden, '| hiddenAt:', hiddenAtRef.current);
+      if (document.hidden) {
+        hiddenAtRef.current = Date.now();
+        console.log('[lock] tab hidden, recorded hiddenAt:', hiddenAtRef.current);
+      } else {
+        const elapsed = hiddenAtRef.current ? Date.now() - hiddenAtRef.current : 0;
+        console.log('[lock] tab visible, elapsed ms:', elapsed, '| threshold:', LOCK_AFTER_MS);
+        if (hiddenAtRef.current && elapsed > LOCK_AFTER_MS) {
+          console.log('[lock] locking — threshold exceeded');
+          setUnlocked(false);
+        } else {
+          console.log('[lock] not locking — elapsed below threshold');
+        }
+        hiddenAtRef.current = null;
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      console.log('[lock] cleanup — removing listener');
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [settings?.passwordEnabled, unlocked, setUnlocked]);
 
   if (!hydrated) return null;
 

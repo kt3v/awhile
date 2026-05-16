@@ -18,7 +18,13 @@ export default function PasswordModal() {
   const needsLock = !!settings?.passwordEnabled && !!settings?.passwordHash && !unlocked;
 
   useEffect(() => {
-    if (needsLock) inputRef.current?.focus();
+    if (needsLock) {
+      setValue('');
+      setError(false);
+      setShaking(false);
+      setPending(false);
+      inputRef.current?.focus();
+    }
   }, [needsLock]);
 
   if (!needsLock) return null;
@@ -64,14 +70,14 @@ export default function PasswordModal() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} autoComplete="off" className="flex flex-col gap-3">
           <input
             ref={inputRef}
             type="password"
             value={value}
             onChange={(e) => { setValue(e.target.value); setError(false); }}
             placeholder="Password"
-            autoComplete="current-password"
+            autoComplete="off"
             className="w-full text-sm font-medium outline-none transition-all duration-150"
             style={{
               background: 'var(--bg-secondary)',
