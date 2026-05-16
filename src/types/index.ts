@@ -28,3 +28,10 @@ export interface RangeTag {
   note: string;
   updatedAt: string | null;
 }
+
+export interface PersistedState {
+  settings: Settings | null;
+  notes: Record<string, Note>;
+  rangeTags: RangeTag[];
+  theme: 'light' | 'dark';
+}

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Note, Settings, CellId, RangeTag } from '../types';
-import { createApiStorage } from '../lib/apiStorage';
+import { createStorageProxy } from '../lib/storage';
 import { randomUUID } from '../utils/uuid';
 
 interface Store {
@@ -94,7 +94,7 @@ export const useStore = create<Store>()(
     {
       name: 'awhile-storage',
       version: 3,
-      storage: createApiStorage(),
+      storage: createStorageProxy(),
       skipHydration: true,
       partialize: (state) => ({
         settings: state.settings,
