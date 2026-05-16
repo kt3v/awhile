@@ -4,7 +4,7 @@
 
 **awhile** is a personal life timeline application that renders your life as a scrollable grid of months, with one row per year. It allows you to add notes to any month and mark life periods with color-coded range tags.
 
-![](screenshot.png)
+<img src="screenshot.png" width="300" />
 
 ## Features
 
