@@ -108,10 +108,17 @@ export default function Grid() {
 
   useEffect(() => {
     const onMouseUp = () => {
+      if (Date.now() < suppressMouseUntilRef.current) return;
+      if (touchSelectingRef.current) return;
       const d = dragRef.current;
       if (!d) return;
-      setSelectedRange({ start: d.start, end: d.end });
-      selectCell(null);
+      if (!d.moved) {
+        setSelectedRange(null);
+        selectCell(d.start);
+      } else {
+        setSelectedRange({ start: d.start, end: d.end });
+        selectCell(null);
+      }
       setDrag(null);
     };
     window.addEventListener('mouseup', onMouseUp);
@@ -172,13 +179,8 @@ export default function Grid() {
         return;
       }
 
-      if (!d.moved) {
-        setSelectedRange(null);
-        selectCell(d.start);
-      } else {
-        setSelectedRange({ start: d.start, end: d.end });
-        selectCell(null);
-      }
+      setSelectedRange({ start: d.start, end: d.end });
+      selectCell(null);
       setDrag(null);
       setTouchSelecting(false);
     };
