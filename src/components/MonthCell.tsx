@@ -31,9 +31,7 @@ const MonthCell = memo(({ year, month, note, isSelected, isInRange, isRangeEnd, 
   const past = isPast(year, month);
   const hasNote = !!note?.text?.trim();
 
-  const cellClass = hasNote
-    ? (past ? 'cell-note-past' : 'cell-note-future')
-    : (past ? 'cell-past' : 'cell-future');
+  const cellClass = past ? 'cell-past' : 'cell-future';
 
   let ringClass = '';
   let extraStyle: React.CSSProperties = {};
@@ -94,6 +92,12 @@ const MonthCell = memo(({ year, month, note, isSelected, isInRange, isRangeEnd, 
           </span>
         );
       })()}
+      {hasNote && (
+        <span
+          className="absolute inset-0 rounded-sm pointer-events-none"
+          style={{ boxShadow: '0 0 0 var(--note-outline-width) var(--note-outline-color)' }}
+        />
+      )}
     </button>
   );
 });

@@ -6,7 +6,7 @@ export default function Legend() {
         Empty
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="w-3 h-3 rounded-sm inline-block cell-note-future" />
+        <span className="w-3 h-3 rounded-sm inline-block cell-future cell-has-note" />
         Has note
       </span>
       <span className="flex items-center gap-1.5">
