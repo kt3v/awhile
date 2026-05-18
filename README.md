@@ -67,6 +67,7 @@ awhile runs on your own computer or server. Once installed, you open it in a bro
    pm2 save
    pm2 startup
    ```
+   `pm2 startup` will print a `sudo` command — copy and run it to complete the setup.
 
 5. Open your browser and navigate to [http://localhost:3001](http://localhost:3001).
 
