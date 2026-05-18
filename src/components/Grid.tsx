@@ -203,6 +203,14 @@ export default function Grid() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  const handleCanvasPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!selectedRange) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('button[data-cell-year][data-cell-month]')) return;
+    if (target.closest('[data-tags-sidebar]')) return;
+    setSelectedRange(null);
+  }, [selectedRange]);
+
   if (!settings) return null;
 
   const { year: birthYear } = parseBirthDate(settings.birthDate);
@@ -211,14 +219,6 @@ export default function Grid() {
 
   const hoveredTag = hoveredTagId ? rangeTags.find((t) => t.id === hoveredTagId) : null;
   const topOffset = 24 + headerHeight; // pt-6 + measured header height
-
-  const handleCanvasPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!selectedRange) return;
-    const target = e.target as HTMLElement;
-    if (target.closest('button[data-cell-year][data-cell-month]')) return;
-    if (target.closest('[data-tags-sidebar]')) return;
-    setSelectedRange(null);
-  }, [selectedRange]);
 
   return (
     <div
