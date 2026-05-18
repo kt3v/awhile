@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
 import { parseBirthDate } from '../utils/dates';
 import { hashPassword, verifyPassword } from '../utils/password';
+import logoUrl from '../assets/logo.svg';
 
 const TODAY = new Date().toISOString().split('T')[0];
 const DEFAULT_DATE = `${new Date().getFullYear() - 30}-01-01`;
@@ -288,17 +289,37 @@ export default function SettingsModal() {
       >
         {/* Body */}
         <div className="p-5 flex flex-col gap-4">
-          <button
-            onClick={closeSettings}
-            className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150"
-            style={{ color: 'var(--text-2)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-              <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          </button>
+          {!isInitial && (
+            <button
+              onClick={closeSettings}
+              className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg transition-all duration-150"
+              style={{ color: 'var(--text-2)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
+          <div className="flex justify-center px-8">
+            <div
+              className="flex h-14 w-28 items-center justify-center"
+              style={{
+                background: '#fff',
+                border: '1px solid var(--border)',
+                borderRadius: '12px',
+                padding: '7px 10px',
+              }}
+            >
+              <img
+                src={logoUrl}
+                alt="awhile"
+                className="block h-full w-full"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+          </div>
           {isInitial && (
             <p className="text-sm font-medium" style={{ color: 'var(--text-2)', lineHeight: 1.55 }}>
               Your entire life, one square per month.
@@ -376,23 +397,25 @@ export default function SettingsModal() {
 
           <ThemeToggle />
 
-          <div
-            className="flex flex-col gap-2 rounded-xl p-3"
-            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
-          >
-            <p className="text-[11px] font-medium" style={{ color: 'var(--text-3)' }}>
-              You can find answers to common questions here.
-            </p>
-            <a
-              href="https://go.levelry.app/project/aa9851c4-a134-4499-8c14-391b2714a45b"
-              target="_blank"
-              rel="noreferrer"
-              className="w-full py-2 text-xs font-semibold rounded-lg text-center transition-all duration-150"
-              style={{ background: 'var(--mustard)', color: '#000' }}
+          {!isInitial && (
+            <div
+              className="flex flex-col gap-2 rounded-xl p-3"
+              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
             >
-              Open Awhile Docs
-            </a>
-          </div>
+              <p className="text-[11px] font-medium" style={{ color: 'var(--text-3)' }}>
+                You can find answers to common questions here.
+              </p>
+              <a
+                href="https://go.levelry.app/project/aa9851c4-a134-4499-8c14-391b2714a45b"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-2 text-xs font-semibold rounded-lg text-center transition-all duration-150"
+                style={{ background: 'var(--mustard)', color: '#000' }}
+              >
+                Open Awhile Docs
+              </a>
+            </div>
+          )}
 
           {isInitial && (
             <button

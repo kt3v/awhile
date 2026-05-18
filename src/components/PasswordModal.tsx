@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { verifyPassword } from '../utils/password';
+import logoUrl from '../assets/logo.svg';
 
 
 export default function PasswordModal() {
@@ -61,7 +62,23 @@ export default function PasswordModal() {
           boxShadow: 'var(--shadow-xl)',
         }}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div
+            className="flex h-20 w-36 items-center justify-center"
+            style={{
+              background: '#fff',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              padding: '10px 14px',
+            }}
+          >
+            <img
+              src={logoUrl}
+              alt="awhile"
+              className="block h-full w-full"
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
           <p className="text-sm font-semibold" style={{ color: 'var(--text-1)' }}>
             Enter password
           </p>
