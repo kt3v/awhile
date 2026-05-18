@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useStore } from '../store/useStore';
 import { TAG_COLOR_VAR, TAG_LABEL_COLOR, randomTagColor } from '../utils/tagColors';
 import type { CellId, RangeTag } from '../types';
@@ -221,6 +221,21 @@ export default function TagsSidebar({
   const [localHovered, setLocalHovered] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const tagTouchHoveringRef = useRef(false);
+
+  const updateHoveredTagFromPoint = useCallback((x: number, y: number) => {
+    const el = document.elementFromPoint(x, y)?.closest('[data-tag-id]') as HTMLElement | null;
+    const tagId = el?.dataset.tagId ?? null;
+    setLocalHovered(tagId);
+    onHoverTag(tagId);
+  }, [onHoverTag]);
+
+  const stopTagTouchHover = useCallback(() => {
+    if (!tagTouchHoveringRef.current) return;
+    tagTouchHoveringRef.current = false;
+    setLocalHovered(null);
+    onHoverTag(null);
+  }, [onHoverTag]);
 
   useEffect(() => {
     if (!selectedRange) {
@@ -240,6 +255,29 @@ export default function TagsSidebar({
     window.addEventListener('resize', syncMobile);
     return () => window.removeEventListener('resize', syncMobile);
   }, []);
+
+  useEffect(() => {
+    const onTouchMove = (e: TouchEvent) => {
+      if (!tagTouchHoveringRef.current) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      e.preventDefault();
+      updateHoveredTagFromPoint(touch.clientX, touch.clientY);
+    };
+
+    const onTouchEnd = () => {
+      stopTagTouchHover();
+    };
+
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
+    return () => {
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [stopTagTouchHover, updateHoveredTagFromPoint]);
 
   const basePositionMap = assignTagPositions(rangeTags, birthYear);
 
@@ -340,6 +378,7 @@ export default function TagsSidebar({
           <div
             key={tag.id}
             title={tag.label}
+            data-tag-id={tag.id}
             style={{
               position: 'absolute',
               top: chipTop,
@@ -371,9 +410,14 @@ export default function TagsSidebar({
             onClick={() => selectTag(isSel ? null : tag.id)}
             onMouseEnter={() => { setLocalHovered(tag.id); onHoverTag(tag.id); }}
             onMouseLeave={() => { setLocalHovered(null); onHoverTag(null); }}
-            onTouchStart={() => { setLocalHovered(tag.id); onHoverTag(tag.id); }}
-            onTouchEnd={() => { setLocalHovered(null); onHoverTag(null); }}
-            onTouchCancel={() => { setLocalHovered(null); onHoverTag(null); }}
+            onTouchStart={(e) => {
+              tagTouchHoveringRef.current = true;
+              const touch = e.touches[0];
+              if (!touch) return;
+              updateHoveredTagFromPoint(touch.clientX, touch.clientY);
+            }}
+            onTouchEnd={stopTagTouchHover}
+            onTouchCancel={stopTagTouchHover}
             onContextMenu={(e) => e.preventDefault()}
           >
             <span style={{

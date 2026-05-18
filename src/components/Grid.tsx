@@ -13,6 +13,7 @@ interface PendingTouch {
   cell: CellId;
   startX: number;
   startY: number;
+  startedAt: number;
   holdTimer: number;
 }
 
@@ -48,6 +49,7 @@ export default function Grid() {
   const touchSelectingRef = useRef(touchSelecting);
   touchSelectingRef.current = touchSelecting;
   const pendingTouchRef = useRef<PendingTouch | null>(null);
+  const suppressMouseUntilRef = useRef(0);
 
   const clearPendingTouch = useCallback(() => {
     const pending = pendingTouchRef.current;
@@ -65,6 +67,7 @@ export default function Grid() {
   }, [selectedTagId]);
 
   const handleCellMouseDown = useCallback((cell: CellId) => {
+    if (Date.now() < suppressMouseUntilRef.current) return;
     setDrag({ start: cell, end: cell, moved: false });
   }, []);
 
@@ -86,6 +89,7 @@ export default function Grid() {
 
   const handleCellTouchStart = useCallback((cell: CellId, e: React.TouchEvent<HTMLButtonElement>) => {
     if (e.touches.length !== 1) return;
+    suppressMouseUntilRef.current = Date.now() + 500;
     clearPendingTouch();
     const touch = e.touches[0];
     const holdTimer = window.setTimeout(() => {
@@ -97,6 +101,7 @@ export default function Grid() {
       cell,
       startX: touch.clientX,
       startY: touch.clientY,
+      startedAt: Date.now(),
       holdTimer,
     };
   }, [beginTouchRangeSelection, clearPendingTouch]);
@@ -105,13 +110,8 @@ export default function Grid() {
     const onMouseUp = () => {
       const d = dragRef.current;
       if (!d) return;
-      if (!d.moved) {
-        setSelectedRange(null);
-        selectCell(d.start);
-      } else {
-        setSelectedRange({ start: d.start, end: d.end });
-        selectCell(null);
-      }
+      setSelectedRange({ start: d.start, end: d.end });
+      selectCell(null);
       setDrag(null);
     };
     window.addEventListener('mouseup', onMouseUp);
@@ -149,11 +149,18 @@ export default function Grid() {
     };
 
     const onTouchEnd = () => {
+      suppressMouseUntilRef.current = Date.now() + 500;
       const pending = pendingTouchRef.current;
       if (pending) {
+        const heldMs = Date.now() - pending.startedAt;
         clearPendingTouch();
-        setSelectedRange(null);
-        selectCell(pending.cell);
+        if (heldMs >= TOUCH_HOLD_MS) {
+          setSelectedRange({ start: pending.cell, end: pending.cell });
+          selectCell(null);
+        } else {
+          setSelectedRange(null);
+          selectCell(pending.cell);
+        }
         return;
       }
 
