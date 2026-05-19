@@ -1,5 +1,7 @@
 # build output
 dist/
+electron-dist/
+release/
 
 # data (user data, never commit)
 data/

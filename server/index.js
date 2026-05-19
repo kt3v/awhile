@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname  = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR   = path.join(__dirname, '../data');
+const DATA_DIR   = process.env.AWHILE_DATA_DIR ?? path.join(__dirname, '../data');
 const DATA_FILE  = path.join(DATA_DIR, 'awhile.json');
 const IMAGES_DIR = path.join(DATA_DIR, 'images');
 const DIST_DIR   = path.join(__dirname, '../dist');
@@ -58,4 +58,15 @@ app.use((_req, res) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`awhile server on :${PORT}`));
+function listenOn(port) {
+  const server = app.listen(port, () => console.log(`awhile server on :${port}`));
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`port ${port} in use, trying ${port + 1}`);
+      listenOn(port + 1);
+    } else {
+      throw err;
+    }
+  });
+}
+listenOn(Number(PORT));
