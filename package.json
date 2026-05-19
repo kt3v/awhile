@@ -42,13 +42,17 @@
     "appId": "com.awhile.app",
     "productName": "Awhile",
     "asar": true,
+    "compression": "maximum",
     "files": [
       "dist/**/*",
       "electron-dist/**/*",
-      "server/**/*"
+      "server/**/*",
+      "!node_modules/**/*.{md,ts,map}",
+      "!node_modules/**/test{s,}/**",
+      "!node_modules/**/{example,examples,demo,demos}/**"
     ],
     "mac": {
-      "target": [{ "target": "dmg", "arch": ["universal"] }],
+      "target": "dmg",
       "category": "public.app-category.productivity"
     },
     "win": {
