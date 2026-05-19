@@ -1,16 +1,15 @@
-УСТАНОВКА AWHILE
-────────────────
+INSTALLING AWHILE
+─────────────────
 
-1. Перетащите Awhile в папку Applications
+1. Drag Awhile to the Applications folder.
 
-2. Если macOS показывает предупреждение «приложение повреждено» или
-   «не может быть открыто» — это защита Gatekeeper для неподписанных
-   приложений. Чтобы обойти:
+2. If macOS says the app is damaged or can't be opened, this is Gatekeeper
+   blocking unsigned apps. To fix:
 
-   • Нажмите правой кнопкой на Awhile.app → «Открыть» → «Открыть»
+   • Right-click Awhile.app → Open → Open
 
-   Или в Терминале:
+   Or in Terminal:
    xattr -cr /Applications/Awhile.app
 
-────────────────
+─────────────────
 https://github.com/kt3v/awhile

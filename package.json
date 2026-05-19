@@ -59,9 +59,9 @@
     "dmg": {
       "window": { "width": 540, "height": 380 },
       "contents": [
-        { "x": 150, "y": 185 },
-        { "x": 390, "y": 185, "type": "link", "path": "/Applications" },
-        { "x": 270, "y": 330, "type": "file", "path": "build/README_INSTALL.txt", "name": "README УСТАНОВКА.txt" }
+        { "x": 270, "y": 60, "type": "file", "path": "build/README_INSTALL.txt", "name": "README INSTALL.txt" },
+        { "x": 150, "y": 230 },
+        { "x": 390, "y": 230, "type": "link", "path": "/Applications" }
       ]
     },
     "win": {
