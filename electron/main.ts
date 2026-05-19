@@ -1,6 +1,6 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, Menu } from 'electron';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createServer } from 'node:net';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,6 +58,8 @@ function createWindow() {
   });
 }
 
+Menu.setApplicationMenu(null);
+
 app.whenReady().then(async () => {
   if (isDev) {
     // Dev: Vite on :5173, Express on :3001 — both started by concurrently
@@ -71,7 +73,7 @@ app.whenReady().then(async () => {
     process.env.PORT = String(port);
     process.env.AWHILE_DATA_DIR = dataDir;
 
-    const serverEntry = path.join(__dirname, '..', 'server', 'index.js');
+    const serverEntry = pathToFileURL(path.join(__dirname, '..', 'server', 'index.js')).href;
     await import(serverEntry);
 
     appUrl = `http://localhost:${port}`;

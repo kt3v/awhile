@@ -47,6 +47,7 @@
       "dist/**/*",
       "electron-dist/**/*",
       "server/**/*",
+      "build/**/*",
       "!node_modules/**/*.{md,ts,map}",
       "!node_modules/**/test{s,}/**",
       "!node_modules/**/{example,examples,demo,demos}/**"
