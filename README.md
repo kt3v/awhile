@@ -42,7 +42,7 @@ You can run **awhile** either as a standalone desktop application or as a self-h
 
 This is the easiest way to run awhile. It runs as a native application on your computer with no setup required.
 
-1. Go to the [Releases](https://github.com/kt3u/awhile/releases) page.
+1. Go to the [Releases](https://github.com/kt3v/awhile/releases) page.
 2. Download the version for your operating system:
    - **macOS**: `.dmg`
    - **Windows**: `.exe`
@@ -65,7 +65,7 @@ For experienced users or if you want to run awhile on a remote home server. Once
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/kt3u/awhile
+   git clone https://github.com/kt3v/awhile
    cd awhile
    ```
 
