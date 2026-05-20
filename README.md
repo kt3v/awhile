@@ -36,15 +36,32 @@ Your notes, tags, settings, and uploaded images are stored in the local `data/` 
 
 ## Quick Start
 
-awhile runs on your own computer or server. Once installed, you open it in a browser and your data is saved locally in the project's `data/` folder.
+You can run **awhile** either as a standalone desktop application or as a self-hosted web server.
 
-### Prerequisites
+### Option 1: Desktop Application (Recommended)
+
+This is the easiest way to run awhile. It runs as a native application on your computer with no setup required.
+
+1. Go to the [Releases](https://github.com/kt3u/awhile/releases) page.
+2. Download the version for your operating system:
+   - **macOS**: `.dmg`
+   - **Windows**: `.exe`
+   - **Linux**: `.AppImage`
+3. Install and run the application.
+
+---
+
+### Option 2: Self-Hosted Server (Advanced)
+
+For experienced users or if you want to run awhile on a remote home server. Once configured, you access awhile via your web browser.
+
+#### Prerequisites
 
 - [Node.js](https://nodejs.org/) 20+
 - [Git](https://git-scm.com/)
-- [PM2](https://pm2.keymetrics.io/) (`npm install -g pm2`)
+- [PM2](https://pm2.keymetrics.io/) (`npm install -g pm2`) — recommended for keeping the server running in the background.
 
-### Installation
+#### Installation & Launch
 
 1. Clone the repository:
    ```bash
@@ -57,29 +74,28 @@ awhile runs on your own computer or server. Once installed, you open it in a bro
    npm install
    ```
 
-3. Start with PM2 (builds automatically, then starts the server):
+3. Start the server (with PM2, builds automatically):
    ```bash
    pm2 start ecosystem.config.cjs
    ```
+   *Without PM2: You can also start the server in the foreground using `npm start`.*
 
 4. (Optional) Auto-start on system reboot:
    ```bash
    pm2 save
    pm2 startup
    ```
-   `pm2 startup` will print a `sudo` command — copy and run it to complete the setup.
+   `pm2 startup` will print a command — copy and run it to complete setup.
 
 5. Open your browser and navigate to [http://localhost:3001](http://localhost:3001).
 
-> **Without PM2:** `npm start` also works — it builds and starts the server in one step.
-
 ---
 
-## Maintenance
+## Maintenance & Updates
 
-### Updating
+### Updating Self-Hosted Server
 
-To update to the latest version:
+To update your self-hosted instance to the latest version:
 
 ```bash
 git pull
@@ -91,15 +107,20 @@ The restart automatically rebuilds the frontend before launching.
 
 ### Data & Backups
 
-All your data lives in the `./data/` directory, created automatically on first run:
+awhile is fully private. All your notes, settings, and uploaded images are saved as plain files:
+- `awhile.json` — notes, tags, and settings (plain JSON)
+- `images/` — uploaded images referenced by notes
 
-- `data/awhile.json` — notes, tags, and settings (plain JSON)
-- `data/images/` — uploaded images referenced by notes
+Depending on how you run the app, your data directory is located at:
 
-**To create a backup:**
-```bash
-cp -r data/ data.backup/
-```
+* **Desktop Application**:
+  - **macOS**: `~/Library/Application Support/awhile/data/`
+  - **Windows**: `%APPDATA%\awhile\data\`
+  - **Linux**: `~/.config/awhile/data/`
+* **Self-Hosted Server**:
+  - Inside the cloned repository under `./data/`
+
+To backup your database, simply copy the contents of the corresponding directory.
 
 ---
 
