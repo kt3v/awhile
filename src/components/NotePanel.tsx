@@ -27,7 +27,7 @@ export default function NotePanel() {
   const setNote = useStore((s) => s.setNote);
   const selectCell = useStore((s) => s.selectCell);
   const birthDate = useStore((s) => s.settings?.birthDate);
-  const birthYear = birthDate ? parseBirthDate(birthDate).year : undefined;
+  const birth = birthDate ? parseBirthDate(birthDate) : undefined;
 
   const selectedTagId = useStore((s) => s.selectedTagId);
   const rangeTags = useStore((s) => s.rangeTags);
@@ -221,6 +221,9 @@ export default function NotePanel() {
   const editorKey = activeTabId === 'month' ? `cell-${cellKey_}` : `tag-${activeTabId}`;
   const charCount = htmlCharCount(editorValue);
   const savedAt = activeTabId === 'month' ? note?.updatedAt : displayTag?.updatedAt;
+  const selectedAge = selectedCell && birth
+    ? selectedCell.year - birth.year - (selectedCell.month < birth.month ? 1 : 0)
+    : 0;
 
   return (
     <>
@@ -266,7 +269,7 @@ export default function NotePanel() {
                         {MONTHS_FULL[selectedCell.month]} {selectedCell.year}
                       </h2>
                       <span className="text-xs font-medium shrink-0" style={{ color: 'var(--text-3)' }}>
-                        Age {selectedCell.year - (birthYear ?? selectedCell.year)}
+                        Age {selectedAge}
                       </span>
                     </div>
                   ) : displayTag ? (
